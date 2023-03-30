@@ -225,6 +225,7 @@ elsif ($in{'cmd'} =~ "rename")  {
 		@footer = ('status.cgi?snap='.$in{'parent'}.'@'.$in{'name'}, $in{'parent'}.'@'.$in{'name'});
 	} elsif (index($in{'zfs'}, '/') != -1) {
 		$cmd = ($config{'zfs_properties'} =~ /1/) ? "zfs rename ".$in{'force'}.$in{'prnt'}.$in{'zfs'}." ".$in{'parent'}.'/'.$in{'name'} : undef;
+		if ($in{'confirm'}) { @footer = ('status.cgi?zfs='.$in{'parent'}.'/'.$in{'name'}, $in{'parent'}.'/'.$in{'name'}); }
 	}
 		&ui_cmd($in{'zfs'}." to ".$in{'name'}, $cmd);
 }

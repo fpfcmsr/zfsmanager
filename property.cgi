@@ -92,36 +92,31 @@ if (can_edit($in{'zfs'}, $in{'property'}) =~ 1) {
 		if ($in{'zfs'}) {
 			print &ui_hidden('cmd', 'setzfs');
 			my @select = [ split(", ", $proplist{$in{'property'}}), 'inherit' ];
-			if ($proplist{$in{'property'}} eq 'boolean') {
-				@select = [ 'on', 'off', 'inherit' ];
-			}
+			if ($proplist{$in{'property'}} eq 'boolean') { @select = [ 'on', 'off', 'inherit' ]; }
 			print "Change to: ";
-			#The following line was specifically added when com.sun:auto-snapshot does not have a value
-			if ($get{$in{'zfs'}}{$in{'property'}}{value} eq "-") {
-				$get{$in{'zfs'}}{$in{'property'}}{value} = 'inherit';
+			# The following line was specifically added when com.sun:auto-snapshot does not have a value.
+			if ($get{$in{'zfs'}}{$in{'property'}}{value} eq "-") { $get{$in{'zfs'}}{$in{'property'}}{value} = 'inherit'; }
+				print &ui_select('set', $get{$in{'zfs'}}{$in{'property'}}{value}, @select, 1, 0, 1);
 			}
-			print &ui_select('set', $get{$in{'zfs'}}{$in{'property'}}{value}, @select, 1, 0, 1);
-		} elsif ($in{'pool'}) {
+		elsif ($in{'pool'}) {
 			print &ui_hidden('cmd', 'setpool') ;
 			my @select = [ split(", ", $pool_proplist{$in{'property'}}) ];
-			if ($pool_proplist{$in{'property'}} eq 'boolean') {
-				@select = [ 'on', 'off' ];
-			}
+			if ($pool_proplist{$in{'property'}} eq 'boolean') { @select = [ 'on', 'off' ]; }
 			print &ui_select('set', $get{$in{'pool'}}{$in{'property'}}{value}, @select, 1, 0, 1);
 		}
 		print &ui_submit('submit');
 		print "<br />";
 		print "<br />";
-	}
-	print &ui_form_end();
+}
+print &ui_form_end();
 }
 
 if ($in{'zfs'} && (index($in{'zfs'}, '@') != -1)) {
 	&ui_print_footer("status.cgi?snap=$in{'zfs'}", $in{'zfs'});
-}
+	}
 if ($in{'zfs'} && (index($in{'zfs'}, '@') =~ -1)) {
 	&ui_print_footer("status.cgi?zfs=$in{'zfs'}", $in{'zfs'});
-}
+	}
 if ($in{'pool'}) {
 	&ui_print_footer("status.cgi?pool=$in{'pool'}", $in{'pool'});
-}
+	}

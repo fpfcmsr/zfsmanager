@@ -4,7 +4,7 @@
 require './zfsmanager-lib.pl';
 &ReadParse();
 &ui_print_header(undef, $text{'index_title'}, "", "intro", 1, 1, 0,
-	&help_search_link("zfs zpool beadm", "man", "doc", "google"), undef, undef, $text{'index_version'} );
+	&help_search_link("zfs zpool beadm bectl", "man", "doc", "google"), undef, undef, $text{'index_version'} );
 
 # Perform some checks if boot environments manager enabled.
 if ($config{'show_bootenv'} =~ /1/) {
@@ -69,8 +69,10 @@ print &ui_tabs_end_tab("mode", "pools");
 # Start zfs tab.
 print &ui_tabs_start_tab("mode", "zfs");
 
+print "<div>"; # Div tags are needed for new theme apparently.
 &ui_zfs_list();
 if ($config{'zfs_properties'} =~ /1/) { print "<a href='create.cgi?create=zfs'>Create file system</a>"; }
+print "</div>";
 print &ui_tabs_end_tab("mode", "zfs");
 
 # Start snapshots tab.

@@ -8,8 +8,8 @@ use POSIX qw(strftime);
 foreign_require("mount", "mount-lib.pl");
 my %access = &get_module_acl();
 
-#return hash of properties that can be set manually and their data type
 sub properties_list
+#return hash of properties that can be set manually and their data type
 {
 	my %list = ('atime' => 'boolean', 'devices' => 'boolean', 'exec' => 'boolean', 'nbmand' => 'boolean', 'readonly' => 'boolean', 'setuid' => 'boolean', 'shareiscsi' => 'boolean', 'utf8only' => 'boolean', 'vscan' => 'boolean', 'zoned' => 'boolean', 'relatime' => 'boolean', 'overlay' => 'boolean',
 		'aclinherit' => 'discard, noallow, restricted, passthrough, passthrough-x', 'aclmode' => 'discard, groupmaks, passthrough', 'casesensitivity' => 'sensitive, insensitive, mixed', 'checksum' => 'on, off, fletcher2, fletcher4, sha256', 'compression' => 'on, off, lzjb, lz4, gzip, gzip-1, gzip-2, gzip-3, gzip-4, gzip-5, gzip-6, gzip-7, gzip-8, gzip-9, zle', 'copies' => '1, 2, 3', 'dedup' => 'on, off, verify, sha256', 'logbias' => 'latency, throughput', 'normalization' => 'none, formC, formD, formKC, formKD', 'primarycache' => 'all, none, metadata', 'secondarycache' => 'all, none, metadata', 'snapdir' => 'hidden, visible', 'snapdev' => 'hidden, visible', 'sync' => 'standard, always, disabled', 'xattr' => 'on, off, sa', 'com.sun:auto-snapshot' => 'true, false', 'acltype' => 'noacl, posixacl', 'redundant_metadata' => 'all, most', 'recordsize' => '512, 1K, 2K, 4K, 8K, 16K, 32K, 64K, 128K, 256K, 512K, 1M', 'canmount' => 'on, off, noauto',
@@ -79,9 +79,9 @@ sub list_zpools
 	return %hash;
 }
 
-#zfs list
 sub list_zfs
 	{
+	#zfs list
 	my ($zfs) = @_;
 	my %hash=();
 	$list=&backquote_command("zfs list -H -o name,$config{'list_zfs'} $zfs");
@@ -138,20 +138,18 @@ sub get_alerts
 				$status = ( $value );
 			} elsif ((($key =~ 'state') || ($key =~ 'errors')) && ($value)) {
 				$status{$pool}{$key} = $value;
-				}
 			}
-			my $out = "<b>";
-			foreach $key (sort(keys %status)) {
-				%zstat = zpool_status($key);
-				$out .= "pool \'".$key."\' is ".$zstat{0}{state}." with ".$zstat{0}{errors}."<br />";
-				if ($zstat{0}{status}) {
-					$out .= "status: ".$zstat{0}{status}."<br />";
-				}
-				$out .= "<br />";
-			}
-		$out .= "</b>";
-		return $out;
 	}
+	my $out = "<b>";
+	foreach $key (sort(keys %status)) {
+		%zstat = zpool_status($key);
+		$out .= "pool \'".$key."\' is ".$zstat{0}{state}." with ".$zstat{0}{errors}."<br />";
+		if ($zstat{0}{status}) { $out .= "status: ".$zstat{0}{status}."<br />"; }
+		$out .= "<br />";
+	}
+	$out .= "</b>";
+	return $out;
+}
 }
 
 #zpool_status($pool)
@@ -285,6 +283,7 @@ sub diff
 	return @array;
 }
 
+
 sub list_disk_ids
 {
 	my $byid = '/dev/disk/by-id'; #for linux
@@ -301,8 +300,8 @@ sub list_disk_ids
 	return %hash;
 }
 
-#deprecated
 sub cmd_create_zfs
+#deprecated
 {
 	my ($zfs, $options)  = @_;
 	my $opts = ();
@@ -321,8 +320,8 @@ sub cmd_create_zfs
 	return $cmd;
 }
 
-#deprecated
 sub cmd_create_zpool
+#deprecated
 {
 	my ($pool, $dev, $options, $poolopts, $force) = @_;
 	my $opts = ();
@@ -361,8 +360,8 @@ sub ui_zpool_list
 	print &ui_columns_end();
 }
 
-#deprecated
 sub ui_zpool_status
+#deprecated
 {
 	my ($pool, $action) = @_;
 	if ($action eq undef) { $action = "status.cgi?pool="; }
@@ -447,17 +446,15 @@ sub ui_list_snapshots
 	my ($zfs, $admin) = @_;
 	%snapshot = list_snapshots($zfs);
 	@props = split(/,/, $config{list_snap});
-	if ($admin =~ /1/) {
+	if ($admin =~ /1/) { 
 		print &ui_form_start('cmd.cgi', 'post');
 		print &ui_hidden('cmd', 'multisnap');
-	}
+		}
 	print &ui_columns_start([ "snapshot", @props ]);
 	my $num = 0;
 	foreach $key (sort(keys %snapshot)) {
 		@vals = ();
-		foreach $prop (@props) {
-			push (@vals, $snapshot{$key}{$prop});
-		}
+		foreach $prop (@props) { push (@vals, $snapshot{$key}{$prop}); }
 		if ($admin =~ /1/) {
 			print &ui_columns_row([&ui_checkbox("select", $snapshot{$key}{name}.";", "<a href='status.cgi?snap=$snapshot{$key}{'name'}'>$snapshot{$key}{'name'}</a>"), @vals ]);
 			$num ++;
@@ -468,13 +465,13 @@ sub ui_list_snapshots
 	print &ui_columns_end();
 	if ($admin =~ /1/) {
 		print &select_all_link('select', '', "Select All"), " | ", &select_invert_link('select', '', "Invert Selection")
-	}
+		}
 	if (($admin =~ /1/) && ($config{'snap_destroy'} =~ /1/)) {
 		print " | ".&ui_submit("Destroy selected snapshots");
-	}
+		}
 	if ($admin =~ /1/) {
 		print &ui_form_end();
-	}
+		}
 }
 
 sub ui_create_snapshot
@@ -491,6 +488,75 @@ sub ui_create_snapshot
 	return $rv;
 }
 
+sub ui_cmd
+{
+	my ($message, $cmd) = @_;
+	print "$text{'cmd_'.$in{'cmd'}} $message $text{'index_withcmd'}<br />\n";
+	print "<i># ".$cmd."</i><br /><br />\n";
+	if (!$in{'confirm'}) {
+		print &ui_form_start('cmd.cgi', 'post');
+		foreach $key (keys %in) {
+			print &ui_hidden($key, $in{$key});
+		}
+		print "<h3>$text{'index_continue'}</h3>\n";
+		print &ui_submit("$text{'button_yes'}", "confirm", 0)."<br />";
+		print &ui_form_end();
+	} else {
+		@result = (&backquote_command("$cmd 2>&1"));
+		if (!$result[0]) {
+			print "$text{'index_success'} <br />\n";
+		} else	{
+			print "<b>$text{'index_output'} </b>".$result[0]."<br />\n";
+			foreach $key (@result[1..@result]) {
+				print $key."<br />\n";
+			}
+		}
+	}
+	print "<br />";
+}
+
+sub ui_cmd_old
+{
+	my ($message, $cmd) = @_;
+	$rv = "Attempting to $message with command... <br />\n";
+	$rv .= "<i># ".$cmd."</i><br /><br />\n";
+	if (!$in{'confirm'}) {
+		$rv .= &ui_form_start('cmd.cgi', 'post');
+		foreach $key (keys %in) {
+			$rv .= &ui_hidden($key, $in{$key});
+		}
+		$rv .= "<h3>Would you lke to continue?</h3>\n";
+		$rv .= &ui_submit("yes", "confirm", 0)."<br />";
+		$rv .= &ui_form_end();
+	} else {
+		@result = (&backquote_command("$cmd 2>&1"));
+		if (!$result[0]) {
+			$rv .= "Success! <br />\n";
+		} else  {
+			$rv .= "<b>error: </b>".$result[0]."<br />\n";
+			foreach $key (@result[1..@result]) {
+				$rv .= $key."<br />\n";
+			}
+		}
+	}
+	return $rv;
+}
+
+
+
+sub ui_popup_link
+#deprecated
+{
+	my ($name, $url)=@_;
+	return "<a onClick=\"\window.open('$url', 'cmd', 'toolbar=no,menubar=no,scrollbars=yes,width=600,height=400,resizable=yes'); return false\"\ href='$url'>$name</a>";
+}
+
+sub test_function
+{
+
+}
+
+# ---- Boot Environments (alfa state) ----
 sub get_beadm_version
 {
 	my $version = &backquote_command("$config{'beadm_path'} version");
@@ -730,69 +796,4 @@ sub ui_destroy_bootenv
 	$rv .= &ui_form_end();
 	return $rv;
 }
-
-sub ui_cmd
-{
-	my ($message, $cmd) = @_;
-	print "$text{'cmd_'.$in{'cmd'}} $message $text{'index_withcmd'}<br />\n";
-	print "<i># ".$cmd."</i><br /><br />\n";
-	if (!$in{'confirm'}) {
-		print &ui_form_start('cmd.cgi', 'post');
-		foreach $key (keys %in) {
-			print &ui_hidden($key, $in{$key});
-		}
-		print "<h3>$text{'index_continue'}</h3>\n";
-		print &ui_submit("$text{'button_yes'}", "confirm", 0)."<br />";
-		print &ui_form_end();
-	} else {
-		@result = (&backquote_command("$cmd 2>&1"));
-		if (!$result[0]) {
-			print "$text{'index_success'} <br />\n";
-		} else	{
-			print "<b>$text{'index_output'} </b>".$result[0]."<br />\n";
-			foreach $key (@result[1..@result]) {
-				print $key."<br />\n";
-			}
-		}
-	}
-	print "<br />";
-}
-
-sub ui_cmd_old
-{
-	my ($message, $cmd) = @_;
-	$rv = "Attempting to $message with command... <br />\n";
-	$rv .= "<i># ".$cmd."</i><br /><br />\n";
-	if (!$in{'confirm'}) {
-		$rv .= &ui_form_start('cmd.cgi', 'post');
-		foreach $key (keys %in) {
-			$rv .= &ui_hidden($key, $in{$key});
-		}
-		$rv .= "<h3>Would you lke to continue?</h3>\n";
-		$rv .= &ui_submit("yes", "confirm", 0)."<br />";
-		$rv .= &ui_form_end();
-	} else {
-		@result = (&backquote_command("$cmd 2>&1"));
-		if (!$result[0]) {
-			$rv .= "Success! <br />\n";
-		} else  {
-			$rv .= "<b>error: </b>".$result[0]."<br />\n";
-			foreach $key (@result[1..@result]) {
-				$rv .= $key."<br />\n";
-			}
-		}
-	}
-	return $rv;
-}
-
-#deprecated
-sub ui_popup_link
-{
-	my ($name, $url)=@_;
-	return "<a onClick=\"\window.open('$url', 'cmd', 'toolbar=no,menubar=no,scrollbars=yes,width=600,height=400,resizable=yes'); return false\"\ href='$url'>$name</a>";
-}
-
-sub test_function
-{
-
-}
+# ---- Boot Environments End ---
