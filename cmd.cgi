@@ -118,8 +118,22 @@ elsif ($in{'cmd'} =~ "backupbe")  {
 	# Check for the backup directory.
 	&create_backup_dir();
 
+	# Check the backup command.
+	if ($config{'be_command'} =~ "gzip") {
+		$export_ext = "gz";
+	} elsif ($config{'be_command'} =~ "xz") {
+		$export_ext = "xz";
+	} elsif ($config{'be_command'} eq "") {
+		$export_ext = "";
+	}
+
 	# Always take a recent snapshot of the boot environment before backup.
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "zfs snapshot ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} && zfs send $config{'zfs_sendparam'} ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} | xz $config{'be_compress'} > ${bakupdir}/${backup_date}.xz".$in{'backupbe'} : undef;
+	if ($export_ext eq "") {
+		$cmd = ($config{'bootenv_tasks'} =~ /1/) ? "zfs snapshot ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} && zfs send $config{'zfs_sendparam'} ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} > ${bakupdir}/${backup_date} $in{'backupbe'}" : undef;
+	} elsif ($export_ext =~ "gz" || $export_ext =~ "xz") {
+		$cmd = ($config{'bootenv_tasks'} =~ /1/) ? "zfs snapshot ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} && zfs send $config{'zfs_sendparam'} ${zroot_dataset}/$in{'zfsbe'}\@${snap_date} | $config{'be_command'} $config{'be_compress'} > ${bakupdir}/${backup_date}.$export_ext $in{'backupbe'}" : undef;
+	}
+
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'backupbe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
@@ -128,7 +142,22 @@ elsif ($in{'cmd'} =~ "restorebe")  {
 	my $zroot_dataset = get_zroot_dataset();
 	chomp($zroot_dataset);
 	my $restore_date = strftime "restore-%Y-%m-%d-%H%M%S", localtime;
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "xz $config{'be_decompress'} $in{'befile'} | zfs receive $config{'zfs_recvparam'} ${zroot_dataset}/${restore_date}".$in{'backupbe'} : undef;
+
+	# Check the backup command.
+	if ($config{'be_command'} =~ "gzip") {
+		$export_ext = "gz";
+	} elsif ($config{'be_command'} =~ "xz") {
+		$export_ext = "xz";
+	} elsif ($config{'be_command'} eq "") {
+		$export_ext = "";
+	}
+
+	if ($export_ext eq "") {
+		$cmd = ($config{'bootenv_tasks'} =~ /1/) ? "zfs receive $config{'zfs_recvparam'} ${zroot_dataset}/${restore_date} $in{'backupbe'} < $in{'befile'}" : undef;
+	} elsif ($export_ext =~ "gz" || $export_ext =~ "xz") {
+		$cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'be_command'} $config{'be_decompress'} $in{'befile'} | zfs receive $config{'zfs_recvparam'} ${zroot_dataset}/${restore_date} $in{'backupbe'}" : undef;
+	}
+
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'restorebe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
