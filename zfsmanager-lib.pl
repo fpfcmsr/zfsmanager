@@ -679,12 +679,17 @@ sub ui_list_bootenvs
 
 sub ui_create_bootenv
 {
+	# Disable button if there is any zfs send/recv running instance.
+	if (&check_zfs_send() || &check_zfs_recv()) {
+		$state_create = "disable";
+	}
+
 	#my ($zfsbe) = @_;
 	$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 	my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
 	$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
 	$rv .= &ui_hidden('cmd', "bootenv")."\n";
-	$rv .= &ui_submit("$text{'button_create'}");
+	$rv .= &ui_submit("$text{'button_create'}", state => "${state_create}");
 	$rv .= &ui_textbox('bootenv', $date, 20)."\n";
 	$rv .= "$text{'blabel_newbe'}<br />\n";
 	$rv .= &ui_form_end();
@@ -695,6 +700,10 @@ sub ui_activate_bootenv
 {
 	my ($zfsbe) = @_;
 	if (&check_be_active($zfsbe)) {
+		$state_act = "disable";
+		}
+	elsif (&check_zfs_send() || &check_zfs_recv()) {
+		# Disable button if there is any zfs send/recv running instance.
 		$state_act = "disable";
 	}
 
@@ -711,6 +720,10 @@ sub ui_mount_bootenv
 {
 	my ($zfsbe) = @_;
 	if (&check_be_root($zfsbe)) {
+		$state_mnt = "disable";
+		}
+	elsif (&check_zfs_send() || &check_zfs_recv()) {
+		# Disable button if there is any zfs send/recv running instance.
 		$state_mnt = "disable";
 	}
 
@@ -733,12 +746,17 @@ sub ui_mount_bootenv
 
 sub ui_rename_bootenv
 {
+	# Disable button if there is any zfs send/recv running instance.
+	if (&check_zfs_send() || &check_zfs_recv()) {
+		$state_rename = "disable";
+	}
+
 	my ($zfsbe) = @_;
 	$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 	my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
 	$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
 	$rv .= &ui_hidden('cmd', "renamebe")."\n";
-	$rv .= &ui_submit("$text{'button_rename'}");
+	$rv .= &ui_submit("$text{'button_rename'}", state => "${state_rename}");
 	$rv .= &ui_textbox('bootenv', $date, 20)."\n";
 	$rv .= "$text{'blabel_rename'} <i>".$zfsbe."<br />\n";
 	$rv .= &ui_form_end();
@@ -749,14 +767,14 @@ sub ui_backup_bootenv
 {
 	# Disable button if there is any zfs send/recv running instance.
 	if (&check_zfs_send() || &check_zfs_recv()) {
-		$state_bak = "disable";
+		$state_backup = "disable";
 	}
 
 	my ($zfsbe) = @_;
 	$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 	$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
 	$rv .= &ui_hidden('cmd', "backupbe")."\n";
-	$rv .= &ui_submit("$text{'button_backup'}", state => "${state_bak}");
+	$rv .= &ui_submit("$text{'button_backup'}", state => "${state_backup}");
 	$rv .= "$text{'blabel_backup'} <i>".$zfsbe."<br />\n";
 	$rv .= &ui_form_end();
 	return $rv;
@@ -766,14 +784,14 @@ sub ui_restore_bootenv
 {
 	# Disable button if there is any zfs send/recv running instance.
 	if (&check_zfs_send() || &check_zfs_recv()) {
-		$state_res = "disable";
+		$state_restore = "disable";
 	}
 
 	my ($zfsbe) = @_;
 	$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 	$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
 	$rv .= &ui_hidden('cmd', "restorebe")."\n";
-	$rv .= &ui_submit("$text{'button_restore'}", state => "${state_res}");
+	$rv .= &ui_submit("$text{'button_restore'}", state => "${state_restore}");
 	$rv .= &ui_filebox('befile')."\n";
 	$rv .= "$text{'blabel_restore'}<br />\n";
 	$rv .= &ui_form_end();
@@ -784,13 +802,13 @@ sub ui_destroy_bootenv
 {
 	my ($zfsbe) = @_;
 	if (&check_be_active($zfsbe) || &check_be_root($zfsbe)) {
-		$state_del = "disable";
+		$state_destroy = "disable";
 	}
 
 	$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 	$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
 	$rv .= &ui_hidden('cmd', "destroybe")."\n";
-	$rv .= &ui_submit("$text{'button_delete'}", state => "${state_del}");
+	$rv .= &ui_submit("$text{'button_delete'}", state => "${state_destroy}");
 	$rv .= "$text{'blabel_delete'} <i>".$zfsbe."<br />\n";
 	$rv .= &ui_checkbox('force', '-f', "$text{'blabel_force'}");
 	$rv .= &ui_form_end();
