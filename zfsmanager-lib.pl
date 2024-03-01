@@ -12,17 +12,17 @@ sub properties_list
 #return hash of properties that can be set manually and their data type
 {
 	my %list = ('atime' => 'boolean', 'devices' => 'boolean', 'exec' => 'boolean', 'nbmand' => 'boolean', 'readonly' => 'boolean', 'setuid' => 'boolean', 'shareiscsi' => 'boolean', 'utf8only' => 'boolean', 'vscan' => 'boolean', 'zoned' => 'boolean', 'relatime' => 'boolean', 'overlay' => 'boolean',
-		'aclinherit' => 'discard, noallow, restricted, passthrough, passthrough-x', 'aclmode' => 'discard, groupmaks, passthrough', 'casesensitivity' => 'sensitive, insensitive, mixed', 'checksum' => 'on, off, fletcher2, fletcher4, sha256', 'compression' => 'on, off, lzjb, lz4, gzip, gzip-1, gzip-2, gzip-3, gzip-4, gzip-5, gzip-6, gzip-7, gzip-8, gzip-9, zle', 'copies' => '1, 2, 3', 'dedup' => 'on, off, verify, sha256', 'logbias' => 'latency, throughput', 'normalization' => 'none, formC, formD, formKC, formKD', 'primarycache' => 'all, none, metadata', 'secondarycache' => 'all, none, metadata', 'snapdir' => 'hidden, visible', 'snapdev' => 'hidden, visible', 'sync' => 'standard, always, disabled', 'xattr' => 'on, off, sa', 'com.sun:auto-snapshot' => 'true, false', 'acltype' => 'noacl, posixacl', 'redundant_metadata' => 'all, most', 'recordsize' => '512, 1K, 2K, 4K, 8K, 16K, 32K, 64K, 128K, 256K, 512K, 1M', 'canmount' => 'on, off, noauto',
-		'quota' => 'text', 'refquota' => 'text', 'reservation' => 'text', 'refreservation' => 'text', 'volsize' => 'text', 'filesystem_limit' => 'text', 'snapshot_limit' => 'text',
-		'mountpoint' => 'special', 'sharesmb' => 'special', 'sharenfs' => 'special', 'mounted' => 'special', 'context' => 'special', 'defcontext' => 'special', 'fscontext' => 'special', 'rootcontext' => 'special');
+				'aclinherit' => 'discard, noallow, restricted, passthrough, passthrough-x', 'aclmode' => 'discard, groupmaks, passthrough', 'casesensitivity' => 'sensitive, insensitive, mixed', 'checksum' => 'on, off, fletcher2, fletcher4, sha256', 'compression' => 'on, off, lzjb, lz4, gzip, gzip-1, gzip-2, gzip-3, gzip-4, gzip-5, gzip-6, gzip-7, gzip-8, gzip-9, zle, zstd', 'copies' => '1, 2, 3', 'dedup' => 'on, off, verify, sha256', 'logbias' => 'latency, throughput', 'normalization' => 'none, formC, formD, formKC, formKD', 'primarycache' => 'all, none, metadata', 'secondarycache' => 'all, none, metadata', 'snapdir' => 'hidden, visible', 'snapdev' => 'hidden, visible', 'sync' => 'standard, always, disabled', 'xattr' => 'on, off, sa', 'com.sun:auto-snapshot' => 'true, false', 'acltype' => 'noacl, posixacl', 'redundant_metadata' => 'all, most', 'recordsize' => '512, 1K, 2K, 4K, 8K, 16K, 32K, 64K, 128K, 256K, 512K, 1M', 'canmount' => 'on, off, noauto',
+				'keylocation' => 'text', 'keystatus' => 'special','quota' => 'text', 'refquota' => 'text', 'reservation' => 'text', 'refreservation' => 'text', 'volsize' => 'text', 'filesystem_limit' => 'text', 'snapshot_limit' => 'text', 
+				'mountpoint' => 'special', 'sharesmb' => 'special', 'sharenfs' => 'special', 'mounted' => 'special', 'context' => 'special', 'defcontext' => 'special', 'fscontext' => 'special', 'rootcontext' => 'special');
 	return %list;
 }
 
 sub pool_properties_list
 {
-	my %list = ('autoexpand' => 'boolean', 'autoreplace' => 'boolean', 'delegation' => 'boolean', 'listsnapshots' => 'boolean',
-		'failmode' => 'wait, continue, panic', 'feature@async_destroy' => 'enabled, disabled', 'feature@empty_bpobj' => 'enabled, disabled', 'feature@lz4_compress' => 'enabled, disabled', 'feature@embedded_data' => 'enabled, disabled', 'feature@enabled_txg' => 'enabled, disabled', 'feature@bookmarks' => 'enabled, disabled', 'feature@hole_birth' => 'enabled, disabled', 'feature@spacemap_histogram' => 'enabled, disabled', 'feature@extensible_dataset' => 'enabled, disabled', 'feature@large_blocks' => 'enabled, disabled', 'feature@filesystem_limits' => 'enabled, disabled',
-		'altroot' => 'special', 'bootfs' => 'special', 'cachefile' => 'special', 'comment' => 'special');
+	my %list = ('autoexpand' => 'boolean', 'autoreplace' => 'boolean', 'delegation' => 'boolean', 'listsnapshots' => 'boolean', 
+				'failmode' => 'wait, continue, panic', 'feature@async_destroy' => 'enabled, disabled', 'feature@empty_bpobj' => 'enabled, disabled', 'feature@lz4_compress' => 'enabled, disabled', 'feature@embedded_data' => 'enabled, disabled', 'feature@enabled_txg' => 'enabled, disabled', 'feature@bookmarks' => 'enabled, disabled', 'feature@hole_birth' => 'enabled, disabled', 'feature@spacemap_histogram' => 'enabled, disabled', 'feature@extensible_dataset' => 'enabled, disabled', 'feature@large_blocks' => 'enabled, disabled', 'feature@filesystem_limits' => 'enabled, disabled',
+				'altroot' => 'special', 'bootfs' => 'special', 'cachefile' => 'special', 'comment' => 'special');
 	return %list;
 }
 
@@ -556,7 +556,7 @@ sub test_function
 
 }
 
-# ---- Boot Environments (alfa state) ----
+# ---- Boot Environments (alpha state) ----
 sub get_beadm_version
 {
 	my $version = &backquote_command("$config{'beadm_path'} version");

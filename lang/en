@@ -88,7 +88,7 @@ export_cmd=zpool export [-a] [-f] <u>pool</u> ...
 export_desc=Exports the given pools from the system. All devices are marked as exported, but are still considered in use by other subsystems. The devices can be moved between systems (even those of different endianness) and imported as long as a sufficient number of devices are present.<br /><br />Before exporting the pool, all datasets within the pool are unmounted. A pool can not be exported if it has a shared spare that is currently being used.<br /><br />For pools to be portable, you must give the zpool command whole disks, not just partitions, so that ZFS can label the disks with portable EFI labels. Otherwise, disk drivers on platforms of different endianness will not recognize the disks.<br /><br />-a    Exports all pools imported on the system.<br /><br />-f    Forcefully unmount all datasets, using the "unmount -f" command. <br /><br />This command will forcefully export the pool even if it has a shared spare that is currently being used. This may lead to potential data corruption.<br /><br />
 
 #universal property descriptions
->
+
 prop_guid=A unique identifier for the pool or filesystem.<br /><br />The 64 bit GUID of a dataset or bookmark does not change over its entire lifetime. When a snapshot is sent to another pool, the received snapshot has the same GUID. Thus, the guid is suitable to identify a snapshot across pools.
 
 #zfs property descriptions
@@ -113,6 +113,7 @@ prop_defcontext=This flag sets the SELinux context for unlabeled files.  See sel
 prop_devices=Controls whether device nodes can be opened on this file system. The default value is "on".
 prop_dnodesize=Specifies a compatibility mode or literal value for the size of dnodes in the file system. The default value is legacy.  Setting this property to a value other than legacy requires the large_dnode pool feature to be enabled.<br /><br />Consider setting dnodesize to auto if the dataset uses the xattr=sa property setting and the workload makes heavy use of extended attributes. This may be applicable to SELinux-enabled systems, Lustre servers, and Samba servers, for example. Literal values are supported for cases where the optimal size is known in advance and for performance testing.<br /><br />Leave dnodesize set to legacy if you need to receive a send stream of this dataset on a pool that doesn't enable the large_dnode feature, or if you need to import this pool on a system that doesn't support the large_dnode feature.<br /><br />This property can also be referred to by its shortened column name, dnsize.
 prop_encryption=Controls the encryption cipher suite (block cipher, key length, and mode) used for this dataset. Requires the encryption feature to be enabled on the pool.  Requires a keyformat to be set at dataset creation time.<br /><br />Selecting encryption=on when creating a dataset indicates that the default encryption suite will be selected, which is currently aes-256-gcm.  In order to provide consistent data protection, encryption must be specified at dataset creation time and it cannot be changed afterwards.<br /><br />For more details and caveats about encryption see the Encryption section of zfs-load-key(8).
+prop_encryptionroot=For encrypted datasets, indicates where the dataset is currently inheriting its encryption key from. Loading or unloading a key for the encryptionroot will implicitly load / unload the key for any inheriting datasets (see zfs load-key and zfs unload-key for details).  Clones will always share an encryption key with their origin. See the Encryption section of zfs-load-key(8) for details.
 prop_exec=Controls whether processes can be executed from  within  this  file system. The default value is "on".
 prop_filesystem_count=The total number of filesystems and volumes that exist under this location in the dataset tree. This value is only available when a filesystem_limit has been set somewhere in the tree under which the dataset resides.
 prop_filesystem_limit=Limits the number of filesystems and volumes that can exist under this point in the dataset tree. The limit is not enforced if the user is allowed to change the limit. Setting a filesystem_limit on a descendent of a filesystem that already has a filesystem_limit does not override the ancestor\'s filesystem_limit, but rather imposes an additional limit. This feature must be enabled to be used (see zpool-features(5)).
@@ -204,6 +205,7 @@ prop_version=The current on-disk version of the pool. This can be increased, but
 #snapshot property descriptiosn
 prop_defer_destroy=This property is on if the snapshot has been marked for deferred destroy by using the zfs destroy -d command. Otherwise, the property is off.
 prop_origin=For cloned file systems or volumes, the snapshot from which the clone was created. See also the clones property.
+# ZFS Manager End
 
 # ZFS Boot Environments
 index_betitle=Boot Environments
