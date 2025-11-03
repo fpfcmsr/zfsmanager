@@ -26,7 +26,7 @@ Thank you for stopping by and I hope you enjoy this plugin!
 
 
 ## About this fork
-This fork of the ZFS Manager Webmin module originally developed by [jonmatifa](https://github.com/jonmatifa/zfsmanager), and then by [jonmJRGTH](https://github.com/JRGTH/zfsmanager). This is my attempt to get it to be able to prep disks before zpool creation (gpt / create delete partitions etc). If (<- doing a lot of work here) it ends up working then I would try to get it upstreamed. 
+This fork of the ZFS Manager Webmin module originally developed by [jonmatifa](https://github.com/jonmatifa/zfsmanager), and then by [JRGTH](https://github.com/JRGTH/zfsmanager). This is my attempt to get it to be able to prep disks before zpool creation (gpt / create delete partitions etc). If (<- doing a lot of work here) it ends up working then I would try to get it upstreamed. 
 
 ## ZFS Manager testing builds for Webmin/FreeBSD
 Latest ZFS Manager Webmin module testing builds with Boot Environments support and management(beadm/bectl) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)
