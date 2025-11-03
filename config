@@ -20,3 +20,11 @@ zfs_recvparam=
 bootenv_destroy=0
 bootenv_tasks=1
 show_bootenv=1
+
+# additional disk stuff
+gpart_cmd=/sbin/gpart
+geom_cmd=/sbin/geom
+sysctl_cmd=/sbin/sysctl
+camcontrol_cmd=/sbin/camcontrol
+nvmecontrol_cmd=/sbin/nvmecontrol
+zpool_cmd=/sbin/zpool
