@@ -19,6 +19,7 @@ if ($in{'create'} =~ "zpool")
 	print &ui_table_row(undef, '<b>Mount point</b> (blank for default)'.&ui_filebox('mountpoint', $in{'mountpoint'}, 25, undef, undef, 1));
 	if (!$in{'version'}) { $in{'version'} = 'default'; }
 	print &ui_table_row(undef, '<b>Pool version:</b> '.ui_select('version', $in{'version'}, ['default', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28'], 1, 0, 1));
+    print &ui_links_row([ [ "disks.cgi", "Detect & prepare disks…" ] ]); 
 	print &ui_table_row(undef, '<b>Force</b> '.&ui_checkbox('force', '-f'));
 	print &ui_table_row(undef, "<br />");
 	delete $createopts{'sparse'};
