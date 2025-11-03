@@ -63,7 +63,16 @@ if ($config{'pool_properties'} =~ /1/) {
 	print "<a href='create.cgi?create=zpool'>Create new pool<a/>";
 	print " | ";
 	print "<a href='create.cgi?import=1'>Import pool<a/>";
+
+    #################### added this to zpool, need to make sure that create.cgi aligns with this ###############
+    print &ui_hr();
+	print &ui_links_row([
+	  [ "disks.cgi", "Disks (detect & prepare)" ],
+	  [ "create.cgi", "Create Pool" ],
+	  [ "status.cgi", "Pool Status" ],
+	]);
 }
+
 print &ui_tabs_end_tab("mode", "pools");
 
 # Start zfs tab.
@@ -98,3 +107,4 @@ print &ui_tabs_end(1);
 print "<h3>Alerts: </h3>", get_alerts(), "";
 
 &ui_print_footer("/", $text{'index'});
+
